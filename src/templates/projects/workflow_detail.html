@@ -1,0 +1,54 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}{{ workflow.name }} - {{ studio.name }} - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'studio_list' %}">Studios</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'studio_detail' studio.slug %}">{{ studio.name }}</a></li>
+        <li class="breadcrumb-item active">{{ workflow.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ workflow.name }}</h1>
+        <p class="lead">{{ workflow.description }}</p>
+
+        <p>
+            <strong>Studio:</strong>
+            <a href="{% url 'studio_detail' studio.slug %}">{{ studio.icon }} {{ studio.name }}</a>
+        </p>
+
+        {% if workflow.branch_name %}
+        <p>
+            <strong>Git Branch:</strong> <code>{{ workflow.branch_name }}</code>
+        </p>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Info</h5>
+                <p><strong>Slug:</strong> <code>{{ workflow.slug }}</code></p>
+                <p><strong>Toolkit:</strong> {{ studio.toolkit.name }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if workflow.get_datasets_list %}
+<div class="row mt-4">
+    <div class="col">
+        <h4>Datasets Used</h4>
+        <ul class="list-group">
+            {% for dataset in workflow.get_datasets_list %}
+            <li class="list-group-item">{{ dataset }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

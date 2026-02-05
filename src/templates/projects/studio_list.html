@@ -1,0 +1,36 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}Studios - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<h1>Studios</h1>
+<p class="lead">Workflow implementations and experiment environments.</p>
+
+<div class="row">
+    {% for studio in studios %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ studio.icon }} {{ studio.name }}</h5>
+                <p class="card-text">{{ studio.description }}</p>
+                <p class="text-muted small">
+                    <strong>Toolkit:</strong>
+                    <a href="{% url 'toolkit_detail' studio.toolkit.slug %}">{{ studio.toolkit.name }}</a>
+                </p>
+                <a href="{% url 'studio_detail' studio.slug %}" class="btn btn-primary">View Details</a>
+                {% if studio.github_url %}
+                <a href="{{ studio.github_url }}" class="btn btn-outline-secondary" target="_blank">GitHub</a>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{ studio.workflows.count }} workflow(s)</small>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <p class="text-muted">No studios available yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}Toolkits - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<h1>Toolkits</h1>
+<p class="lead">Core libraries and foundational packages for NeuroAI research.</p>
+
+<div class="row">
+    {% for toolkit in toolkits %}
+    <div class="col-md-6 mb-4">
+        <div class="card toolkit-card h-100" style="border-left-color: {{ toolkit.color }};">
+            <div class="card-body">
+                <h5 class="card-title">{{ toolkit.icon }} {{ toolkit.name }}</h5>
+                <p class="card-text">{{ toolkit.description }}</p>
+                {% if toolkit.get_modules_list %}
+                <p class="text-muted small">
+                    <strong>Modules:</strong> {{ toolkit.get_modules_list|join:", " }}
+                </p>
+                {% endif %}
+                <div class="mt-auto">
+                    <a href="{% url 'toolkit_detail' toolkit.slug %}" class="btn btn-primary">View Details</a>
+                    {% if toolkit.github_url %}
+                    <a href="{{ toolkit.github_url }}" class="btn btn-outline-secondary" target="_blank">GitHub</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{ toolkit.studios.count }} studio(s)</small>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <p class="text-muted">No toolkits available yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

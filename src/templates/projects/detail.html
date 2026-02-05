@@ -1,0 +1,23 @@
+
+{% extends 'projects/base.html' %}
+{%load projects_extras %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="blog-layout.css" />
+        <div class="col-md-4">
+
+        <img class="card-img-top"  src="{% static project.image %}" alt = " " >
+    </div>
+        <div class="card-body">
+            <h5 >{{ project.title }}</h5>
+            <p >{{ project.description | convert_markdown|safe }}</p>
+            <p > Input Data: {{ project.input_data_location }}</p>
+            <p > Bash Script: {{ project.input_script_location }}</p>
+            <p > Output Data: {{ project.output_data_location }}</p>
+            <p > Technology Used: {{ project.technology }}</p>
+
+
+    </div>
+    {% endblock %}

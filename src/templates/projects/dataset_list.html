@@ -1,0 +1,29 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}Datasets - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<h1>Datasets</h1>
+<p class="lead">Available datasets for training and evaluation.</p>
+
+<div class="row">
+    {% for dataset in datasets %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ dataset.icon }} {{ dataset.name }}</h5>
+                <p class="card-text">{{ dataset.description|truncatewords:25 }}</p>
+                {% if dataset.use_case %}
+                <p class="text-muted small"><strong>Use case:</strong> {{ dataset.use_case|truncatewords:15 }}</p>
+                {% endif %}
+                <a href="{% url 'dataset_detail' dataset.slug %}" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <p class="text-muted">No datasets available yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

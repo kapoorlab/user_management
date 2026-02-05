@@ -1,0 +1,42 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}{{ dataset.name }} - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'dataset_list' %}">Datasets</a></li>
+        <li class="breadcrumb-item active">{{ dataset.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ dataset.icon }} {{ dataset.name }}</h1>
+        <p class="lead">{{ dataset.description }}</p>
+
+        {% if dataset.use_case %}
+        <h4>Use Case</h4>
+        <p>{{ dataset.use_case }}</p>
+        {% endif %}
+
+        {% if dataset.get_features_list %}
+        <h4>Features</h4>
+        <ul>
+            {% for feature in dataset.get_features_list %}
+            <li>{{ feature }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Info</h5>
+                <p><strong>Slug:</strong> <code>{{ dataset.slug }}</code></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

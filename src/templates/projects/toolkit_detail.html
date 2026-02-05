@@ -1,0 +1,66 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}{{ toolkit.name }} - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'toolkit_list' %}">Toolkits</a></li>
+        <li class="breadcrumb-item active">{{ toolkit.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ toolkit.icon }} {{ toolkit.name }}</h1>
+        <p class="lead">{{ toolkit.description }}</p>
+
+        {% if toolkit.github_url %}
+        <p><a href="{{ toolkit.github_url }}" class="btn btn-outline-dark" target="_blank">View on GitHub</a></p>
+        {% endif %}
+
+        {% if toolkit.get_modules_list %}
+        <h4>Key Modules</h4>
+        <ul>
+            {% for module in toolkit.get_modules_list %}
+            <li><code>{{ module }}</code></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card" style="border-top: 4px solid {{ toolkit.color }};">
+            <div class="card-body">
+                <h5 class="card-title">Info</h5>
+                <p><strong>Slug:</strong> <code>{{ toolkit.slug }}</code></p>
+                <p><strong>Studios:</strong> {{ toolkit.studios.count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if toolkit.studios.exists %}
+<div class="row mt-5">
+    <div class="col">
+        <h3>Studios using {{ toolkit.name }}</h3>
+    </div>
+</div>
+<div class="row">
+    {% for studio in toolkit.studios.all %}
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ studio.icon }} {{ studio.name }}</h5>
+                <p class="card-text">{{ studio.description|truncatewords:30 }}</p>
+                <a href="{% url 'studio_detail' studio.slug %}" class="btn btn-sm btn-primary">View Studio</a>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{ studio.workflows.count }} workflow(s)</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

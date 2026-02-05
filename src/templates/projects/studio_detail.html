@@ -1,0 +1,64 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}{{ studio.name }} - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'studio_list' %}">Studios</a></li>
+        <li class="breadcrumb-item active">{{ studio.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ studio.icon }} {{ studio.name }}</h1>
+        <p class="lead">{{ studio.description }}</p>
+
+        <p>
+            <strong>Toolkit:</strong>
+            <a href="{% url 'toolkit_detail' studio.toolkit.slug %}">
+                {{ studio.toolkit.icon }} {{ studio.toolkit.name }}
+            </a>
+        </p>
+
+        {% if studio.github_url %}
+        <p><a href="{{ studio.github_url }}" class="btn btn-outline-dark" target="_blank">View on GitHub</a></p>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Info</h5>
+                <p><strong>Slug:</strong> <code>{{ studio.slug }}</code></p>
+                <p><strong>Workflows:</strong> {{ studio.workflows.count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if studio.workflows.exists %}
+<div class="row mt-5">
+    <div class="col">
+        <h3>Workflows</h3>
+    </div>
+</div>
+<div class="row">
+    {% for workflow in studio.workflows.all %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ workflow.name }}</h5>
+                <p class="card-text">{{ workflow.description|truncatewords:20 }}</p>
+                {% if workflow.branch_name %}
+                <p class="small"><strong>Branch:</strong> <code>{{ workflow.branch_name }}</code></p>
+                {% endif %}
+                <a href="{% url 'workflow_detail' studio.slug workflow.slug %}" class="btn btn-sm btn-primary">View Workflow</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

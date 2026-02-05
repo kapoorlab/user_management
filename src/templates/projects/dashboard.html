@@ -1,0 +1,67 @@
+{% extends 'projects/base.html' %}
+
+{% block title %}Dashboard - NeuroAI Lab{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>NeuroAI Lab Dashboard</h1>
+        <p class="lead">Welcome, {{ user.username|default:'Guest' }}. Explore our toolkits, studios, and datasets.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Toolkits</h5>
+                <p class="card-text">Core libraries and foundational packages for NeuroAI research.</p>
+                <a href="{% url 'toolkit_list' %}" class="btn btn-primary">View Toolkits</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Studios</h5>
+                <p class="card-text">Workflow implementations and experiment environments.</p>
+                <a href="{% url 'studio_list' %}" class="btn btn-primary">View Studios</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Datasets</h5>
+                <p class="card-text">Available datasets for training and evaluation.</p>
+                <a href="{% url 'dataset_list' %}" class="btn btn-primary">View Datasets</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if toolkits %}
+<div class="row mt-5">
+    <div class="col">
+        <h3>All Toolkits</h3>
+    </div>
+</div>
+<div class="row">
+    {% for toolkit in toolkits %}
+    <div class="col-md-6 mb-3">
+        <div class="card toolkit-card" style="border-left-color: {{ toolkit.color }};">
+            <div class="card-body">
+                <h5 class="card-title">{{ toolkit.icon }} {{ toolkit.name }}</h5>
+                <p class="card-text">{{ toolkit.description|truncatewords:20 }}</p>
+                <a href="{% url 'toolkit_detail' toolkit.slug %}" class="btn btn-sm btn-outline-primary">Details</a>
+                {% if toolkit.github_url %}
+                <a href="{{ toolkit.github_url }}" class="btn btn-sm btn-outline-secondary" target="_blank">GitHub</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
