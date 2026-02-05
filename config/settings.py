@@ -18,7 +18,7 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1"
+    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,131.173.36.128"
 ).split(",")
 
 # Application definition
@@ -94,7 +94,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = "static/"
+STATIC_URL = "/usermanagement/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
@@ -104,3 +104,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "dashboard"
 LOGIN_URL = "login"
+
+# For running behind nginx at /usermanagement
+FORCE_SCRIPT_NAME = "/usermanagement"
+USE_X_FORWARDED_HOST = True
+CSRF_TRUSTED_ORIGINS = ["https://131.173.36.128"]
