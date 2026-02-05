@@ -3,7 +3,7 @@ from django.db import models
 
 
 class LabUser(AbstractUser):
-    """Custom user model for NeuroAI Lab members."""
+    """Custom user model for KietzmannLab Lab members."""
 
     uni_email = models.EmailField(
         blank=True,

@@ -1,11 +1,11 @@
 {% extends 'projects/base.html' %}
 
-{% block title %}Dashboard - NeuroAI Lab{% endblock %}
+{% block title %}Dashboard - Kietzmann Lab{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col">
-        <h1>NeuroAI Lab Dashboard</h1>
+        <h1>Kietzmann Lab Dashboard</h1>
         <p class="lead">Welcome, {{ user.username|default:'Guest' }}. Explore our toolkits, studios, and datasets.</p>
     </div>
 </div>
@@ -15,7 +15,7 @@
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Toolkits</h5>
-                <p class="card-text">Core libraries and foundational packages for NeuroAI research.</p>
+                <p class="card-text">Core libraries and foundational packages for Kietzmann research.</p>
                 <a href="{% url 'toolkit_list' %}" class="btn btn-primary">View Toolkits</a>
             </div>
         </div>

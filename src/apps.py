@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class DjangoAppConfig(AppConfig):
+class UserManagementConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "projects"
+    name = "src"
+    verbose_name = "Kietzmann Lab User Management"
