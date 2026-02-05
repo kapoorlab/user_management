@@ -10,6 +10,60 @@
         span.helptext { display: none; }
         .navbar-brand { font-weight: bold; }
         .toolkit-card { border-left: 4px solid; }
+        .modules-content pre,
+        .description-content pre {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+        .modules-content code,
+        .description-content code {
+            color: #d63384;
+        }
+        .description-content h1, .description-content h2, .description-content h3,
+        .description-content h4, .description-content h5, .description-content h6 {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .description-content ul, .description-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .description-content p {
+            margin-bottom: 0.75rem;
+        }
+        .description-content table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+        .description-content table th,
+        .description-content table td {
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            text-align: left;
+        }
+        .description-content table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .description-content table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .description-content blockquote {
+            border-left: 4px solid #dee2e6;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #6c757d;
+        }
+        .description-content hr {
+            margin: 1.5rem 0;
+            border: 0;
+            border-top: 1px solid #dee2e6;
+        }
     </style>
 </head>
 <body>
@@ -37,7 +91,10 @@
                             <span class="nav-link">{{ user.username }}</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link btn btn-link" style="border:none;cursor:pointer;">Logout</button>
+                            </form>
                         </li>
                     {% else %}
                         <li class="nav-item">

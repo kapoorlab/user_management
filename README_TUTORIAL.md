@@ -392,3 +392,229 @@ Remember to:
 3. **Template not found**
    - Check directory structure matches app name
    - Ensure 'APP_DIRS': True in TEMPLATES settings
+
+---
+
+## Production Deployment with Nginx
+
+This section covers deploying your Django app behind Nginx with SSL and basic authentication.
+
+### Step 1: Install Nginx (macOS)
+
+```bash
+brew install nginx
+```
+
+Nginx config location: `/opt/homebrew/etc/nginx/` (Apple Silicon) or `/usr/local/etc/nginx/` (Intel)
+
+### Step 2: Generate SSL Certificates
+
+For local/internal use, create self-signed certificates using [mkcert](https://github.com/FiloSottile/mkcert):
+
+```bash
+brew install mkcert
+mkcert -install
+mkcert 131.173.36.128  # Replace with your IP
+```
+
+This creates `131.173.36.128.pem` and `131.173.36.128-key.pem` in the current directory.
+
+Move them to a secure location:
+```bash
+mv 131.173.36.128*.pem ~/
+```
+
+### Step 3: Create Password File for Basic Auth
+
+```bash
+# Install htpasswd (comes with httpd)
+brew install httpd
+
+# Create password file
+htpasswd -c /opt/homebrew/etc/nginx/.usermanagement-auth admin
+```
+
+Add more users:
+```bash
+htpasswd /opt/homebrew/etc/nginx/.usermanagement-auth newuser
+```
+
+### Step 4: Configure Django Settings
+
+Update `config/settings.py` for running behind a reverse proxy:
+
+```python
+# Allowed hosts
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "131.173.36.128"]
+
+# Static files - include the URL prefix
+STATIC_URL = "/usermanagement/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# For running behind nginx at /usermanagement
+FORCE_SCRIPT_NAME = "/usermanagement"
+USE_X_FORWARDED_HOST = True
+CSRF_TRUSTED_ORIGINS = ["https://131.173.36.128"]
+```
+
+### Step 5: Collect Static Files
+
+```bash
+python manage.py collectstatic
+```
+
+### Step 6: Configure Nginx
+
+Edit `/opt/homebrew/etc/nginx/nginx.conf`:
+
+```nginx
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen 443 ssl;
+        server_name 131.173.36.128;
+
+        ssl_certificate     /Users/youruser/131.173.36.128.pem;
+        ssl_certificate_key /Users/youruser/131.173.36.128-key.pem;
+
+        # Django User Management App
+        location /usermanagement/ {
+            proxy_pass http://127.0.0.1:8000/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Script-Name /usermanagement;
+
+            # Basic authentication
+            auth_basic "Restricted Access";
+            auth_basic_user_file /opt/homebrew/etc/nginx/.usermanagement-auth;
+        }
+
+        # Serve static files directly
+        location /usermanagement/static/ {
+            alias /path/to/your/project/staticfiles/;
+        }
+    }
+}
+```
+
+### Step 7: Test and Start Nginx
+
+```bash
+# Test configuration
+nginx -t
+
+# Start nginx
+brew services start nginx
+
+# Or reload if already running
+nginx -s reload
+```
+
+### Step 8: Run Django
+
+```bash
+python manage.py runserver 127.0.0.1:8000
+```
+
+### Step 9: Access Your App
+
+Visit: `https://131.173.36.128/usermanagement/`
+
+You'll be prompted for the username/password you created with htpasswd.
+
+Admin interface: `https://131.173.36.128/usermanagement/admin/`
+
+### Nginx Commands Reference
+
+```bash
+# Start nginx
+brew services start nginx
+
+# Stop nginx
+brew services stop nginx
+
+# Restart nginx
+brew services restart nginx
+
+# Reload config without restart
+nginx -s reload
+
+# Test configuration
+nginx -t
+
+# View error logs
+tail -f /opt/homebrew/var/log/nginx/error.log
+```
+
+### Running Django as a Background Service
+
+For production, use Gunicorn instead of the development server:
+
+```bash
+pip install gunicorn
+
+# Run with gunicorn
+gunicorn config.wsgi:application --bind 127.0.0.1:8000
+
+# Run in background with nohup
+nohup gunicorn config.wsgi:application --bind 127.0.0.1:8000 &
+```
+
+### Adding Multiple Apps to Nginx
+
+You can serve multiple Django apps on different paths:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name 131.173.36.128;
+
+    ssl_certificate     /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    # App 1: User Management
+    location /usermanagement/ {
+        proxy_pass http://127.0.0.1:8000/;
+        auth_basic "User Management";
+        auth_basic_user_file /opt/homebrew/etc/nginx/.usermanagement-auth;
+        # ... other proxy headers
+    }
+
+    # App 2: Another Django App
+    location /otherapp/ {
+        proxy_pass http://127.0.0.1:8001/;
+        auth_basic "Other App";
+        auth_basic_user_file /opt/homebrew/etc/nginx/.otherapp-auth;
+        # ... other proxy headers
+    }
+
+    # App 3: Streamlit or other service
+    location / {
+        proxy_pass http://127.0.0.1:8501/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        # ... other proxy headers
+    }
+}
+```
+
+### Security Notes
+
+1. **Never expose Django's development server directly** - Always use Nginx as a reverse proxy
+2. **Use strong passwords** for htpasswd authentication
+3. **Keep SSL certificates secure** - Restrict file permissions
+4. **In production**, use proper SSL certificates from Let's Encrypt or a CA
+5. **Set DEBUG=False** in production settings

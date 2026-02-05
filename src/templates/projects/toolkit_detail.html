@@ -20,13 +20,11 @@
         <p><a href="{{ toolkit.github_url }}" class="btn btn-outline-dark" target="_blank">View on GitHub</a></p>
         {% endif %}
 
-        {% if toolkit.get_modules_list %}
-        <h4>Key Modules</h4>
-        <ul>
-            {% for module in toolkit.get_modules_list %}
-            <li><code>{{ module }}</code></li>
-            {% endfor %}
-        </ul>
+        {% if toolkit.modules %}
+        <h4>Structure</h4>
+        <div class="modules-content bg-light p-3 rounded">
+            {{ toolkit.modules|safe }}
+        </div>
         {% endif %}
     </div>
     <div class="col-md-4">

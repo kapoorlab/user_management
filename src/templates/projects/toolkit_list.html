@@ -13,11 +13,6 @@
             <div class="card-body">
                 <h5 class="card-title">{{ toolkit.icon }} {{ toolkit.name }}</h5>
                 <p class="card-text">{{ toolkit.description }}</p>
-                {% if toolkit.get_modules_list %}
-                <p class="text-muted small">
-                    <strong>Modules:</strong> {{ toolkit.get_modules_list|join:", " }}
-                </p>
-                {% endif %}
                 <div class="mt-auto">
                     <a href="{% url 'toolkit_detail' toolkit.slug %}" class="btn btn-primary">View Details</a>
                     {% if toolkit.github_url %}
